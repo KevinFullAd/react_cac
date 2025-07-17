@@ -38,7 +38,7 @@ URL: https://storied-zuccutto-63a9aa.netlify.app/
 ## 🚀 Instalación
 
 ```bash
-git clone https://github.com/tu-usuario/ecommerce-react.git
+git clone https://github.com/KevinFullAd/react_cac.git
 cd ecommerce-react
 npm install
 npm start
