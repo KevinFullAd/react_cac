@@ -15,13 +15,13 @@ const Login = () => {
     };
 
     return (
-        <div className="container mt-5"> 
-        <h2>Iniciar sesión</h2>
-        <form onSubmit={handleSubmit}>
-            <input className="form-control mb-2" placeholder="Usuario" value={username} onChange={e => setUsername(e.target.value)} required />
-            <input className="form-control mb-2" placeholder="Contraseña" value={password} type="password" onChange={e => setPassword(e.target.value)} required />
-            <button className="btn btn-primary" type="submit">Ingresar</button>
-        </form>
+        <div className="container" style={{ maxWidth: "400px", margin: "auto"}}> 
+            <h2>Iniciar sesión</h2>
+            <form onSubmit={handleSubmit}>
+                <input className="form-control mb-2" placeholder="Usuario" value={username} onChange={e => setUsername(e.target.value)} required />
+                <input className="form-control mb-2" placeholder="Contraseña" value={password} type="password" onChange={e => setPassword(e.target.value)} required />
+                <button className="btn btn-primary" type="submit">Ingresar</button>
+            </form>
         </div>
     );
 };

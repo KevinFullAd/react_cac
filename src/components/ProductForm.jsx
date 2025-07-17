@@ -4,19 +4,27 @@ import { useProducts } from "../contexts/ProductContext";
 const ProductForm = ({ existingProduct, onCancel }) => {
     const { addProduct, updateProduct } = useProducts();
 
-    const initialForm = { name: "", price: "", description: "" };
+    const initialForm = {
+        title: "",
+        price: "",
+        description: "",
+        category: "otros",
+        image: ""
+    };
+
     const [form, setForm] = useState(initialForm);
 
-    // Si cambia el producto existente, actualiza el formulario o límpialo si no hay ninguno
     useEffect(() => {
         if (existingProduct) {
             setForm({
-                name: existingProduct.name,
+                title: existingProduct.title,
                 price: existingProduct.price,
                 description: existingProduct.description,
+                category: existingProduct.category || "otros",
+                image: existingProduct.image || ""
             });
         } else {
-            setForm(initialForm); // limpia si ya no hay producto seleccionado
+            setForm(initialForm);
         }
     }, [existingProduct]);
 
@@ -25,7 +33,7 @@ const ProductForm = ({ existingProduct, onCancel }) => {
     };
 
     const validate = () => {
-        if (!form.name.trim()) return "El nombre es obligatorio";
+        if (!form.title.trim()) return "El título es obligatorio";
         if (+form.price <= 0) return "El precio debe ser mayor a 0";
         if (form.description.length < 10) return "La descripción debe tener al menos 10 caracteres";
         return null;
@@ -37,13 +45,16 @@ const ProductForm = ({ existingProduct, onCancel }) => {
         if (error) return alert(error);
 
         if (existingProduct) {
-            updateProduct(existingProduct.id, form);
-            onCancel(); // para cerrar modo edición
+            updateProduct({ ...existingProduct, ...form });
+            onCancel();
         } else {
-            addProduct(form);
+            const newProduct = {
+                id: Date.now(), // ID único
+                ...form
+            };
+            addProduct(newProduct);
         }
 
-        // Limpia el formulario después de cualquier acción
         setForm(initialForm);
     };
 
@@ -53,9 +64,9 @@ const ProductForm = ({ existingProduct, onCancel }) => {
 
             <input
                 className="form-control my-2"
-                name="name"
-                placeholder="Nombre"
-                value={form.name}
+                name="title"
+                placeholder="Título"
+                value={form.title}
                 onChange={handleChange}
                 required
             />
@@ -78,6 +89,22 @@ const ProductForm = ({ existingProduct, onCancel }) => {
                 value={form.description}
                 onChange={handleChange}
                 required
+            />
+
+            <input
+                className="form-control my-2"
+                name="category"
+                placeholder="Categoría"
+                value={form.category}
+                onChange={handleChange}
+            />
+
+            <input
+                className="form-control my-2"
+                name="image"
+                placeholder="URL de imagen"
+                value={form.image}
+                onChange={handleChange}
             />
 
             <div className="d-flex gap-2">

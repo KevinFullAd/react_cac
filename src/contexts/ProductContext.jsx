@@ -1,70 +1,55 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import * as api from "../services/ProductService";
-
 const ProductContext = createContext();
+
 export const useProducts = () => useContext(ProductContext);
 
 export const ProductProvider = ({ children }) => {
     const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(false);
-
-    const fetchProducts = async () => {
-        setLoading(true);
-        try {
-        const data = await api.getProducts();
-        setProducts(data);
-        } catch (error) {
-        toast.error("Error al cargar productos");
-        } finally {
-        setLoading(false);
-        }
-    };
-
-    const addProduct = async (product) => {
-        try {
-        const newProduct = await api.createProduct(product);
-        setProducts(prev => [...prev, newProduct]);
-        toast.success("Producto agregado");
-        } catch {
-        toast.error("Error al agregar producto");
-        }
-    };
-
-    const updateProduct = async (id, data) => {
-        try {
-        const updated = await api.updateProduct(id, data);
-        setProducts(prev => prev.map(p => p.id === id ? updated : p));
-        toast.success("Producto actualizado");
-        } catch {
-        toast.error("Error al actualizar");
-        }
-    };
-
-    const deleteProduct = async (id) => {
-        try {
-        await api.deleteProduct(id);
-        setProducts(prev => prev.filter(p => p.id !== id));
-        toast.success("Producto eliminado");
-        } catch {
-        toast.error("No se pudo eliminar");
-        }
-    };
 
     useEffect(() => {
-        fetchProducts();
+        const localData = localStorage.getItem("products");
+        if (localData) {
+            setProducts(JSON.parse(localData));
+        } else {
+            fetch("https://fakestoreapi.com/products")
+                .then(res => res.json())
+                .then(data => {
+                    setProducts(data);
+                    localStorage.setItem("products", JSON.stringify(data));
+                });
+        }
     }, []);
+
+    const addProduct = (product) => {
+        const updated = [...products, product];
+        setProducts(updated);
+        localStorage.setItem("products", JSON.stringify(updated));
+        toast.success(`Producto ${product.title || product.name} agregado con éxito`);
+    };
+
+    const updateProduct = (updatedProduct) => {
+        const updated = products.map(p => p.id === updatedProduct.id ? updatedProduct : p);
+        setProducts(updated);
+        localStorage.setItem("products", JSON.stringify(updated));
+        toast.success(`Producto ${updatedProduct.title || updatedProduct.name} actualizado con éxito`);
+    };
+
+    const deleteProduct = (id) => {
+        const updated = products.filter(p => p.id !== id);
+        setProducts(updated);
+        toast.success(`Producto eliminado con éxito`);
+        localStorage.setItem("products", JSON.stringify(updated));
+    };
 
     return (
         <ProductContext.Provider value={{
-        products,
-        loading,
-        addProduct,
-        updateProduct,
-        deleteProduct,
-        fetchProducts
+            products,
+            addProduct,
+            updateProduct,
+            deleteProduct
         }}>
-        {children}
+            {children}
         </ProductContext.Provider>
     );
 };

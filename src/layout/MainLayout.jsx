@@ -7,19 +7,19 @@ import { Helmet } from "react-helmet";
 const MainLayout = () => {
   return (
         <>
-        <Helmet>
+        <Helmet style={{ minHeight: "100vh" }}>
             <title>E-Shop 🛍️</title>
             <meta name="description" content="Tienda de tecnología. Comprá tus productos favoritos con confianza." />
             <meta name="viewport" content="width=device-width, initial-scale=1" />
         </Helmet>
 
-        <Navbar />
+        <Navbar style={{ minHeight: "10vh" }} />
 
-        <main className="container mt-4 mb-5">
+        <main className="container mt-4 mb-5 " style={{ minHeight: "80vh" }}>
             <Outlet />
         </main>
 
-        <Footer />
+        <Footer style={{ minHeight: "10vh", background: "rgba(255, 0, 0, 0.8)" }} />
 
         {/* Notificaciones globales */}
         <ToastContainer

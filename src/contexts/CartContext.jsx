@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -7,13 +7,21 @@ const CartContext = createContext();
 export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-    const [cartItems, setCartItems] = useState([]);
+    const [cartItems, setCartItems] = useState(() => {
+        const saved = localStorage.getItem("cart");
+        return saved ? JSON.parse(saved) : [];
+    });
+    useEffect(() => {
+        localStorage.setItem("cart", JSON.stringify(cartItems));
+    }, [cartItems]);
+
 
     const addToCart = (product) => {
-        if (!product || !product.id) {
+        if (!product || (!product.id && product.id !== 0)) {
             toast.error("Producto no válido");
             return;
         }
+
 
         const existingItem = cartItems.find(item => item.id === product.id);
 
@@ -22,11 +30,11 @@ export const CartProvider = ({ children }) => {
                 item.id === product.id ? { ...item, qty: item.qty + 1 } : item
             );
             setCartItems(updatedItems);
-            toast.success(`Se agregó otra unidad de ${product.name}`);
+            toast.success(`Se agregó otra unidad de ${product.title || product.name}`);
         } else {
             const updatedItems = [...cartItems, { ...product, qty: 1 }];
             setCartItems(updatedItems);
-            toast.success(`${product.name} se agregó al carrito 🛒`);
+            toast.success(`${product.title || product.name} se agregó al carrito 🛒`);
         }
     };
 
@@ -40,7 +48,7 @@ export const CartProvider = ({ children }) => {
 
         const updatedItems = cartItems.filter(item => item.id !== productId);
         setCartItems(updatedItems);
-        toast.error(`${productToRemove.name} se eliminó del carrito ❌`);
+        toast.error(`${productToRemove.title || productToRemove.name} se eliminó del carrito ❌`);
     };
 
     const clearCart = () => {

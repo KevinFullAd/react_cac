@@ -3,21 +3,25 @@ import { useAuth } from "../contexts/AuthContext";
 import { useCart } from "../contexts/CartContext";
 import { FaShoppingCart } from "react-icons/fa";
 
-const Navbar = () => {
+const Navbar = ({style=""}) => {
     const { user, logout } = useAuth();
     const { cartItems } = useCart();
     const navigate = useNavigate();
 
     return (
-        <nav className="navbar navbar-expand-lg navbar-dark bg-dark px-4">
+        <nav className={`navbar navbar-expand-lg navbar-dark bg-dark px-4 ${style}`}>
         <span className="navbar-brand" style={{ cursor: "pointer" }} onClick={() => navigate("/")}>
-            🛒 E-Shop
+            <img src="/public/icon.webp" alt="Logo" style={{ width: "30px", height: "30px", marginRight: "0.5rem", backgroundColor:"white", borderRadius:"50%" }} />
+            E-Shop
         </span>
 
         <div className="collapse navbar-collapse">
             <ul className="navbar-nav me-auto">
             <li className="nav-item">
                 <Link className="nav-link" to="/">Inicio</Link>
+            </li>
+            <li className="nav-item">
+                <Link className="nav-link" to="/tienda">Productos</Link>
             </li>
             <li className="nav-item">
                 <Link className="nav-link" to="/cart">
